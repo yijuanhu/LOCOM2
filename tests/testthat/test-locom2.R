@@ -12,6 +12,6 @@ C <- ifelse(throat.meta.filter$Sex == "Male", 0, 1)
 
 # test
 test_that("`locom2` function provides expected results", {
-    res <- locom2(otu.table = throat.otu.table.filter, Y = Y, C = C, seed = 123)
-    expect_equivalent(length(res$detected.otu.Wald), 5)
+    system.time(res <- locom2(formula = throat.otu.table.filter | C ~ Y, seed = 123, n.perm.max=100))
+    expect_equivalent(length(res$detected.otu.Wald), 6)
 })

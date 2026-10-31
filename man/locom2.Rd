@@ -5,36 +5,36 @@
 \title{A logistic regression model for testing differential abundance in compositional microbiome data (LOCOM2)}
 \usage{
 locom2(
-  otu.table,
-  Y,
-  C = NULL,
+  formula,
+  data = NULL,
+  ref.otu = NULL,
   fdr.nominal = 0.1,
   filter = TRUE,
   permute = TRUE,
   n.perm.max = 1000,
   n.rej.stop = 100,
   n.cores = 1,
-  seed = 123,
+  seed = NULL,
   verbose = TRUE,
   Firth.thresh = 0.4
 )
 }
 \arguments{
-\item{otu.table}{The OTU table (or taxa count table), where rows correspond to samples and columns correspond to OTUs (taxa).}
+\item{formula}{A formula in the form of \code{otu.table | C ~ Y}, where \code{otu.table} is the OTU table (or taxa count table), \code{C} contains confounding covariates to be adjusted for, and \code{Y} is the trait of interest. In the OTU table, rows correspond to samples and columns correspond to OTUs. \code{C} can be replaced by multiple (say \code{K}) covariates in the form of \code{C1 + C2 + ... + CK}.}
 
-\item{Y}{The trait of interest, which can be a vector, matrix, or data frame, must be numeric; for example, a factor should be represented by its corresponding design matrix. When specified as a matrix or data frame, all components are tested jointly for microbial association.}
+\item{data}{A data frame for metadata.}
 
-\item{C}{The additional (confounding) covariates to be adjusted for. See the requirements for \code{Y}.}
+\item{ref.otu}{A null OTU to be used as the reference. The default is NULL, in which case the most abundant OTU is selected internally as the reference. The user-supplied value should be a single character string specifying the corresponding column name in the OTU table, such as "Escherichia coli".}
 
 \item{fdr.nominal}{The nominal FDR level, with a default of 0.1.}
 
-\item{filter}{A logical value indicating whether to filter out rare taxa. The default is TRUE, using a filtering threshold of min(0.1*n.sam, 10).}
+\item{filter}{A logical value indicating whether to filter out rare OTUs. The default is TRUE, using a filtering threshold of min(0.1*n.sam, 10).}
 
 \item{permute}{A logical value indicating whether to perform permutation. The default is TRUE.}
 
-\item{n.perm.max}{The maximum number of permutations. The default is 1,000, used for the Wald-type test. The full permutation procedure as in LOCOM is performed when \code{n.perm.max} is set to NULL. In this case, the total number of permutations is determined as \code{n.otu} * \code{n.rej.stop} * (1/\code{fdr.nominal}),
+\item{n.perm.max}{The maximum number of permutations. The default is 1,000, used for the Wald-type test. At least 100 is required for performing the Wald-type test. The full permutation procedure as in LOCOM is performed when \code{n.perm.max} is set to NULL. In this case, the total number of permutations is determined as \code{n.otu} * \code{n.rej.stop} * (1/\code{fdr.nominal}),
 where \code{n.otu} is the number of OTUs (that have non-zero counts in at least one sample). The full permutation procedure adopts a sequential stopping criterion (similar to Sandve et al. 2011),
-which stops when all taxon-level tests have either reached the prespecified
+which stops when all OTU-level tests have either reached the prespecified
 number of rejections (default 100) or yielded a q-value (by the Benjamini-Hochberg [BH] procedure) below the
 nominal FDR level (default 0.1).}
 
@@ -49,7 +49,7 @@ in the output object to enable reproducibility of the permutation replicates.}
 
 \item{verbose}{A logical value indicating whether to produce verbose output during the permutation process. The default is TRUE.}
 
-\item{Firth.thresh}{The threshold (between 0 and 1) of taxon prevalence for applying the Firth correction. The default is 0.4.}
+\item{Firth.thresh}{The threshold (between 0 and 1) of OTU prevalence for applying the Firth correction. The default is 0.4.}
 }
 \value{
 A list consisting of
@@ -63,9 +63,9 @@ A list consisting of
   \item p.otu.asymptotic - asymptotic p-values for OTU-specific tests
   \item q.otu.asymptotic - asymptotic q-values (adjusted p-values by BH) for OTU-specific tests
   \item detected.otu.asymptotic - OTUs detected by the asymptotic test at the nominal FDR level
-  \item beta - effect size at each OTU, defined as beta_j - median (beta_j'), after Yeo–Johnson transformation if the Wald test is used
-  \item beta.var - estimated variance for each beta
-  \item ref.otu - reference OTU
+  \item beta - effect size at each OTU, defined as beta_j - median (beta_j') if the reference is internally selected and beta_j if the reference is user supplied
+  \item beta.var - variance estimate for beta, calculated from 1000 permutations if available or asymptotic variance
+  \item ref.otu - reference OTU, specified by the user or selected internally.
   \item p.global - p-value for the global test (not available in the asymptotic version). The global test is based on the harmonic mean of individual p-values, using all permutation replicates generated up to the point when the procedure terminates.
   \item n.perm.completed - number of permutations completed
   \item seed - the seed used to generate the permutation replicates
@@ -73,7 +73,7 @@ A list consisting of
 }
 \description{
 This function allows you to test
-(1). whether any OTU (or taxon) is associated with the trait of interest with FDR control, based on log ratios of relative abundances between pairs of taxa, and
+(1). whether any OTU (or taxon) is associated with the trait of interest with FDR control, based on log ratios of relative abundances between pairs of OTUs, and
 (2). whether the whole community is associated with the trait (a global test), based on the harmonic mean method for combining individual p-values
 The tests accommodate continuous, discrete (binary or categorical), and multivariate traits, and allow adjustment for confounders.
 }
@@ -81,8 +81,8 @@ The tests accommodate continuous, discrete (binary or categorical), and multivar
 This function extends LOCOM (Hu et al., 2022, PNAS) in the following ways:
 -. accommodating both relative abundance and read count data for OTUs;
 -. refining the weighting scheme in LOCOM to eliminate confounding by library size;
--. incorporating a series of adjustments to ensure stable and reliable inference, even under extreme conditions such as rare taxa and highly unbalanced case–control designs;
--. replacing the computationally intensive permutation procedure with a Wald-type test (using a fixed 1,000 permutation replicates).
+-. incorporating a series of adjustments to ensure stable and reliable inference, even under extreme conditions such as rare OTUs and highly unbalanced case–control designs;
+-. replacing the computationally intensive permutation procedure with a Wald-type test (using a fixed 1,000 permutation replicates by default).
 }
 \examples{
 data("throat.otu.table.filter")
@@ -96,9 +96,11 @@ C <- ifelse(throat.meta.filter$Sex == "Male", 0, 1)
 # running LOCOM2
 ##################
 
-## LOCOM2 (Wald), most recommended, better to use n.cores = 4 to speed up
+## LOCOM2 (Wald), recommended for sample size greater than 100
+## LOCOM2-P (permutation), recommended for sample size less than 100
+## Recommend to use n.cores = 4 to speed up
 
-res.Wald <- locom2(otu.table = throat.otu.table.filter, Y = Y, C = C, seed = 123)
-res.Wald$detected.otu.Wald
-res.Wald$p.otu.Wald[res.Wald$detected.otu.Wald] 
+res <- locom2(formula = throat.otu.table.filter | C ~ Y, seed = 123, n.perm.max = 100) 
+res$detected.otu.Wald
+res$p.otu.Wald[res$detected.otu.Wald] 
 }

@@ -11,6 +11,61 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// CalculateXX0
+arma::cube CalculateXX0(const arma::mat& X);
+RcppExport SEXP _LOCOM2_CalculateXX0(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateXX0(X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Newton
+List Newton(arma::mat freq_table, arma::mat X, arma::cube XX, arma::mat beta_init, arma::mat weight, double tol, int iter_max, double Firth_thresh, bool robust_var, arma::vec prop_presence, bool get_var);
+RcppExport SEXP _LOCOM2_Newton(SEXP freq_tableSEXP, SEXP XSEXP, SEXP XXSEXP, SEXP beta_initSEXP, SEXP weightSEXP, SEXP tolSEXP, SEXP iter_maxSEXP, SEXP Firth_threshSEXP, SEXP robust_varSEXP, SEXP prop_presenceSEXP, SEXP get_varSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type freq_table(freq_tableSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type XX(XXSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type beta_init(beta_initSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type iter_max(iter_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type Firth_thresh(Firth_threshSEXP);
+    Rcpp::traits::input_parameter< bool >::type robust_var(robust_varSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type prop_presence(prop_presenceSEXP);
+    Rcpp::traits::input_parameter< bool >::type get_var(get_varSEXP);
+    rcpp_result_gen = Rcpp::wrap(Newton(freq_table, X, XX, beta_init, weight, tol, iter_max, Firth_thresh, robust_var, prop_presence, get_var));
+    return rcpp_result_gen;
+END_RCPP
+}
+// perm_Newton
+arma::cube perm_Newton(arma::mat freq_table, arma::mat Yr, arma::mat X, arma::cube XX, arma::mat beta_init, arma::mat weight, arma::umat perm, double tol, int iter_max, double Firth_thresh, bool robust_var, arma::vec prop_presence, bool get_var);
+RcppExport SEXP _LOCOM2_perm_Newton(SEXP freq_tableSEXP, SEXP YrSEXP, SEXP XSEXP, SEXP XXSEXP, SEXP beta_initSEXP, SEXP weightSEXP, SEXP permSEXP, SEXP tolSEXP, SEXP iter_maxSEXP, SEXP Firth_threshSEXP, SEXP robust_varSEXP, SEXP prop_presenceSEXP, SEXP get_varSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type freq_table(freq_tableSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Yr(YrSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type XX(XXSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type beta_init(beta_initSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< arma::umat >::type perm(permSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type iter_max(iter_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type Firth_thresh(Firth_threshSEXP);
+    Rcpp::traits::input_parameter< bool >::type robust_var(robust_varSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type prop_presence(prop_presenceSEXP);
+    Rcpp::traits::input_parameter< bool >::type get_var(get_varSEXP);
+    rcpp_result_gen = Rcpp::wrap(perm_Newton(freq_table, Yr, X, XX, beta_init, weight, perm, tol, iter_max, Firth_thresh, robust_var, prop_presence, get_var));
+    return rcpp_result_gen;
+END_RCPP
+}
 // CalculateXX
 arma::cube CalculateXX(const arma::mat& X);
 RcppExport SEXP _LOCOM2_CalculateXX(SEXP XSEXP) {
@@ -72,6 +127,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_LOCOM2_CalculateXX0", (DL_FUNC) &_LOCOM2_CalculateXX0, 1},
+    {"_LOCOM2_Newton", (DL_FUNC) &_LOCOM2_Newton, 11},
+    {"_LOCOM2_perm_Newton", (DL_FUNC) &_LOCOM2_perm_Newton, 13},
     {"_LOCOM2_CalculateXX", (DL_FUNC) &_LOCOM2_CalculateXX, 1},
     {"_LOCOM2_Newton_LOCOM2", (DL_FUNC) &_LOCOM2_Newton_LOCOM2, 13},
     {"_LOCOM2_perm_Newton_LOCOM2", (DL_FUNC) &_LOCOM2_perm_Newton_LOCOM2, 15},

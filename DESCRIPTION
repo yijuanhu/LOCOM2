@@ -1,14 +1,14 @@
 Package: LOCOM2
 Type: Package
-Title: A Logistic Regression Model for Testing Differential Abundance in Compositional Microbiome Data
-Version: 1.0
-Date: 2026-04-18
+Title: A Logistic Regression Model for Testing Microbial Differential Abundance
+Version: 1.1
+Date: 2026-10-29
 Authors@R: person(given = "Yi-Juan",
                       family = "Hu",
                       role = c("aut", "cre"),
                       email = "yijuanhu@bicmr.pku.edu.cn")
 Maintainer: Yi-Juan Hu <yijuanhu@bicmr.pku.edu.cn>
-Description: Testing differential abundance at individual taxa and in a whole microbial community. The tests are based on the log-ratio of relative abundances. The tests accommodate continuous, discrete (binary, categorical), and multivariate traits, and allows adjustment of confounders.
+Description: Testing differential abundance at individual taxa and in a whole microbial community. The tests are based on the log-ratio of relative abundances. The tests accommodate continuous, discrete (binary, categorical), and multivariate traits, and allow adjustment of confounders. For more details see He (2026) <doi:10.64898/2026.04.07.716976>. This package also includes the 'com2seq' function that combines two sequencing datasets (e.g., from 16S marker-gene and shotgun sequencing) for integrative analysis of differential abundance. For more details see <doi:10.1080/01621459.2025.2516205>.
 License: GPL (>= 2)
 RoxygenNote: 7.3.2
 Depends: R (>= 3.5.0)
