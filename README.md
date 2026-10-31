@@ -35,7 +35,7 @@ data("throat.otu.taxonomy")
 
 Y <- ifelse(throat.meta.filter$SmokingStatus == "NonSmoker", 0, 1)
 C <- ifelse(throat.meta.filter$Sex == "Male", 0, 1)
-meta <- cbind(Y, C)
+meta <- data.frame(Y, C)
 
 # running locom2
 res <- locom2(formula = throat.otu.table.filter | C ~ Y, data = meta, seed = 1, n.cores = 4)
@@ -73,7 +73,7 @@ data("meta.1")
 data("meta.2")
 
 
-# restricting to a subset of samples and OTUs for speed
+# restricting to a subset of samples and OTUs to reduce computation time
 sub.sam.1 <- c(31:60)
 sub.sam.2 <- c(1:20, 51:60)
 otu.table.sub.1 <- otu.table.1[sub.sam.1, 1:70]
@@ -82,8 +82,8 @@ meta.sub.1 <- meta.1[sub.sam.1,]
 meta.sub.2 <- meta.2[sub.sam.2,]
 
 # running com2seq
-res.com2seq <- com2seq(formula.1 = otu.table.sub.1 | C ~ as.factor(Y), data.1 = meta.sub.1, 
-                       formula.2 = otu.table.sub.2 | C ~ as.factor(Y), data.2 = meta.sub.2,
+res.com2seq <- com2seq(formula.1 = otu.table.sub.1 | C ~ Y, data.1 = meta.sub.1, 
+                       formula.2 = otu.table.sub.2 | C ~ Y, data.2 = meta.sub.2,
                        seed = 123, n.cores = 4, n.perm.max = 1000)
 res.com2seq$p.global.omni 
 res.com2seq$detected.taxa.omni 
